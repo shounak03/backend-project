@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { log } from 'console';
+
 import fs from 'fs'
 
 cloudinary.config({ 
@@ -23,13 +23,13 @@ const uploadCloudinary = async (localFilePath) => {
     }
 } 
 
-cloudinary.uploader.upload(
-    'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
-        public_id: 'shoes',
-    }
-)
-.catch((error) => {
-    console.log(error);
-});
+// cloudinary.uploader.upload(
+//     'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
+//         public_id: 'shoes',
+//     }
+// )
+// .catch((error) => {
+//     console.log(error);
+// });
 
 export {uploadCloudinary}
