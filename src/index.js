@@ -1,9 +1,7 @@
-
-import { error } from "console";
 import connectDB from "./db/index.js";
 import { configDotenv } from "dotenv";
 import { app } from "./app.js";
-configDotenv({path:'./env'})
+configDotenv({path:'./.env'})
 
 
 

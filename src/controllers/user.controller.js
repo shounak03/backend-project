@@ -3,7 +3,9 @@ import {apiError} from "../utils/apiError.js"
 import {User} from "../models/user.model.js"
 import {uploadOnCloudinary} from '../utils/cloudinary.js'
 import {apiResponse} from "../utils/apiResponse.js"
+
 const registerUser = asyncHandler(async (req,res)=>{
+    
     /*
     steps to register a user
       1. get user details for frontend
@@ -13,7 +15,7 @@ const registerUser = asyncHandler(async (req,res)=>{
       5. check for images, avatar
       6. upload avatar to cloudinary
       7. create user object - entry in db
-      8. remove password anf refresh token from field of response
+      8. remove password and refresh token from field of response
       9. check for user creation
       10. return response
     */
@@ -26,15 +28,18 @@ const registerUser = asyncHandler(async (req,res)=>{
         throw new apiError(400,"All fields are required")
       }
 
-      const existedUser = User.findOne({
+      const existedUser = await User.findOne({
         $or: [{ email },{ username }]
       })
-      if(existedUser){
+      if(existedUser){ //s3
         throw new apiError(409,"User already exists")
       }
 
       const avatar_url = req.files?.avatar[0]?.path;
+      console.log(avatar_url);
+      
       const coverImage_url = req.files?.coverImage[0]?.path;
+      console.log(coverImage_url);
 
       if(!avatar_url)
         throw new apiError(400,"Avatar is required")
@@ -54,18 +59,29 @@ const registerUser = asyncHandler(async (req,res)=>{
         password
     })
 
-    created_user = await User.findById((user._id)).select( //s8
+   const created_user = await User.findById((user._id)).select( //s8
         "-password -refreshToken"
     )
 
-    if(!created_user){
+    if(!created_user){ //s9
         throw new apiError(500,"something went wrong while registering user")
     }
 
-    return res.status(201).json(
+    return res.status(201).json( //s10
         new apiResponse(200,created_user,"user registered successfully")
     )
 
-})
+});
 
-export {registerUser}
+const loginUser = asyncHandler(async(req,res)=>{
+  /*
+  how to login a user
+    1. get the user credentials
+    2. username or email
+    3. check if user exists, find the user
+    4. check if the entertered password matches with the stored one
+    5. access and refresh token
+  */
+});
+
+export {registerUser, loginUser}
